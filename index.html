@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head><body>
+<title>Stella Lu’s Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@200;300;400&display=swap">
+<style>
+/* Layout: one dark gallery room. Splash = the name resting above still night water. Stage = one horizontal row of portrait frames floating over their own reflections, captions beneath, nothing else. Single committed dark look. */
+:root{
+  color-scheme:dark;
+  --ink:#0A0A0A;          /* ground */
+  --paper:#F5F5F5;        /* type */
+  --mist:rgba(245,245,245,.55);  /* secondary type */
+  --haze:rgba(245,245,245,.38);  /* tertiary, hairlines */
+  --line:rgba(245,245,245,.14);
+  --serif:"Cormorant Garamond","Cormorant",Garamond,"Times New Roman",serif;
+  --sans:"Inter","Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --cardH:min(58vh,540px);
+  --cardW:calc(var(--cardH) * 9 / 16);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);font-weight:300;font-size:13px;letter-spacing:.04em;overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+:focus-visible{outline:1px solid var(--paper);outline-offset:4px}
+::selection{background:var(--paper);color:var(--ink)}
+
+/* ---------- Splash ---------- */
+.splash{position:fixed;inset:0;z-index:50;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.splash.out{opacity:0;transform:translateY(-6vh);pointer-events:none}
+.name{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(44px,10.5vw,188px);line-height:.95;letter-spacing:.01em;text-align:center;text-wrap:balance;max-width:92vw;
+  opacity:0;animation:rise 1.4s .15s var(--ease) forwards}
+.name i{font-style:italic}
+.water{position:relative;width:100%;display:flex;justify-content:center;margin-top:.04em;overflow:hidden}
+.water .name{transform:scaleY(-1);filter:url(#ripple);opacity:0;animation:reflect 1.8s .45s var(--ease) forwards;
+  -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,.08) 55%,transparent 85%);mask-image:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,.08) 55%,transparent 85%)}
+.horizon{position:absolute;left:50%;top:0;width:min(70vw,900px);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--line),transparent)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes reflect{from{opacity:0}to{opacity:.6}}
+.skip{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--haze);
+  opacity:0;animation:fadeIn 1s 1.2s var(--ease) forwards}
+@keyframes fadeIn{to{opacity:1}}
+
+/* ---------- Stage ---------- */
+.stage{height:100%;display:grid;grid-template-rows:auto 1fr auto;opacity:0;transition:opacity 1.2s var(--ease)}
+.stage.on{opacity:1}
+.bar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-block:28px 0;
+  padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw)}
+.mark{font-family:var(--serif);font-weight:300;font-size:22px;letter-spacing:.02em}
+.mark i{font-style:italic}
+.meta{display:flex;align-items:baseline;gap:22px;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mist);font-variant-numeric:tabular-nums}
+.link{appearance:none;background:none;border:0;padding:0;cursor:pointer;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mist);
+  border-bottom:1px solid transparent;transition:color .8s var(--ease),border-color .8s var(--ease)}
+.link:hover{color:var(--paper);border-color:var(--haze)}
+
+.rail{display:flex;align-items:center;gap:clamp(28px,4vw,64px);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;
+  padding-left:max(16px,env(safe-area-inset-left,0px),calc(50vw - var(--cardW) / 2));padding-right:max(16px,env(safe-area-inset-right,0px),calc(50vw - var(--cardW) / 2));
+  cursor:grab;touch-action:pan-x;user-select:none;-webkit-user-select:none;overscroll-behavior-x:contain}
+.rail::-webkit-scrollbar{display:none}
+.rail.dragging{cursor:grabbing;scroll-snap-type:none}
+.rail.free{scroll-snap-type:none}
+
+.work{flex:0 0 auto;width:var(--cardW);scroll-snap-align:center;display:flex;flex-direction:column;align-items:stretch;
+  opacity:0;transform:translateY(18px);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.stage.on .work{opacity:1;transform:none}
+.frame{appearance:none;border:0;padding:0;margin:0;background:#111;display:block;width:100%;aspect-ratio:9/16;max-width:100%;border-radius:2px;overflow:hidden;cursor:pointer;position:relative}
+.frame video,.pool video{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) brightness(.82);transform:scale(1);
+  transition:filter 1.1s var(--ease),transform 1.1s var(--ease)}
+.work.lit .frame video,.work.lit .pool video{filter:grayscale(0) brightness(1);transform:scale(1.02)}
+.pool{position:relative;width:100%;height:calc(var(--cardH) * .2);overflow:hidden;margin-top:3px;pointer-events:none}
+.pool video{height:auto;aspect-ratio:9/16;transform-origin:50% 50%;transform:scaleY(-1);filter:grayscale(1) brightness(.82) url(#ripple)}
+.work.lit .pool video{transform:scaleY(-1) scaleX(1.02);filter:grayscale(0) url(#ripple)}
+.pool::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,10,10,.62),var(--ink) 92%)}
+.cap{display:flex;gap:10px;margin-top:12px;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--mist);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color 1s var(--ease)}
+.cap b{font-weight:300;color:var(--haze);font-variant-numeric:tabular-nums}
+.work.lit .cap{color:var(--paper)}
+.empty{margin:auto;font-family:var(--serif);font-style:italic;font-size:22px;color:var(--mist);text-align:center;padding-inline:16px}
+
+.foot{display:flex;justify-content:center;padding-block:0 calc(26px + env(safe-area-inset-bottom,0px));font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--haze)}
+.foot .ln{display:inline-block;width:40px;height:1px;background:var(--line);vertical-align:middle;margin:0 14px}
+
+/* ---------- Viewer ---------- */
+.viewer{position:fixed;inset:0;z-index:40;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  padding:calc(56px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  opacity:0;transition:opacity .9s var(--ease)}
+.viewer.on{opacity:1}
+.viewer video{max-width:100%;max-height:calc(100% - 60px);border-radius:2px;background:#000;display:block}
+.vtitle{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mist);text-align:center}
+.vdesc{max-width:52ch;font-size:12px;line-height:1.7;color:var(--mist);text-align:center;letter-spacing:.02em;white-space:pre-wrap}
+.vtools{display:flex;gap:22px}
+.close{position:fixed;top:calc(20px + env(safe-area-inset-top,0px));right:calc(20px + env(safe-area-inset-right,0px));width:36px;height:36px;appearance:none;background:none;border:0;cursor:pointer;opacity:.7;transition:opacity .8s var(--ease)}
+.close:hover{opacity:1}
+.close::before,.close::after{content:"";position:absolute;left:50%;top:50%;width:26px;height:1px;background:var(--paper);transform:translate(-50%,-50%) rotate(45deg)}
+.close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+
+/* ---------- Editor ---------- */
+.editor{position:fixed;inset:0;z-index:45;background:rgba(10,10,10,.96);display:flex;align-items:center;justify-content:center;overflow:auto;
+  padding:calc(40px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.form{width:min(460px,100%);display:flex;flex-direction:column;gap:22px}
+.form h3{margin:0;font-family:var(--serif);font-weight:300;font-size:34px;letter-spacing:.01em}
+.field{display:flex;flex-direction:column;gap:8px}
+.field>span{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--haze)}
+.field input,.field textarea{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:8px 0;color:var(--paper);outline:none;transition:border-color .8s var(--ease)}
+.field input:focus,.field textarea:focus{border-color:var(--paper)}
+.field textarea{min-height:56px;resize:vertical}
+.drop{border:1px solid var(--line);padding:26px 16px;text-align:center;cursor:pointer;color:var(--mist);font-size:11px;letter-spacing:.2em;text-transform:uppercase;transition:border-color .8s var(--ease)}
+.drop:hover,.drop.over{border-color:var(--haze)}
+.drop .pv{max-height:200px;max-width:100%;display:block;margin:0 auto 12px;filter:grayscale(1)}
+.err{font-size:12px;color:var(--paper);letter-spacing:.02em}
+.row{display:flex;gap:28px;align-items:center}
+.check{display:flex;gap:10px;align-items:center;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mist)}
+.check input{accent-color:#F5F5F5}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--paper)}
+
+@media (max-width:640px){
+  :root{--cardH:min(56vh,520px)}
+  .bar{padding-block:20px 0}
+  .meta{gap:16px}
+}
+@media (hover:none){ .rail{cursor:auto} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="ripple" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="splash" id="splash" role="button" tabindex="0" aria-label="Enter portfolio">
+  <h1 class="name">Stella Lu’s <i>Portfolio</i></h1>
+  <div class="water" aria-hidden="true"><span class="horizon"></span><div class="name">Stella Lu’s <i>Portfolio</i></div></div>
+  <div class="skip">Click or scroll to enter</div>
+</div>
+
+<div class="stage" id="stage">
+  <header class="bar">
+    <span class="mark">Stella <i>Lu</i></span>
+    <div class="meta"><span id="count"></span><button class="link" id="addBtn" hidden>Upload</button></div>
+  </header>
+  <main class="rail" id="rail" aria-label="Works"><p class="empty" id="empty">Loading works</p></main>
+  <footer class="foot" id="foot"><span>Drag</span><span class="ln"></span><span>Click to play</span></footer>
+</div>
+
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Player">
+  <button class="close" id="closeBtn" aria-label="Close"></button>
+  <div id="vbox" style="display:contents"></div>
+</div>
+
+<div class="editor" id="editor" hidden>
+  <form class="form" id="form" novalidate>
+    <h3 id="formTitle">Upload</h3>
+    <label class="drop" id="drop" for="file"><div id="dropInner"></div></label>
+    <input type="file" id="file" accept="video/mp4,video/webm" hidden>
+    <label class="field"><span>Title</span><input id="f-title" maxlength="60"></label>
+    <label class="field"><span>Note (optional)</span><textarea id="f-desc" maxlength="600"></textarea></label>
+    <label class="check"><input type="checkbox" id="f-feat"> Show first</label>
+    <div class="err" id="formErr" hidden></div>
+    <div class="row"><button type="submit" class="link" id="saveBtn">Save</button><button type="button" class="link" id="cancelBtn">Cancel</button></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="application/json" id="works-data">[{"id": "w01", "src": "v/wmachine_ootd.mp4", "poster": "v/wmachine_ootd.jpg", "preview": "v/wmachine_ootd-preview.mp4", "mediaType": "video/mp4", "title": "Washing Machine OOTD", "desc": "", "featured": false, "createdAt": 0}, {"id": "w02", "src": "v/streetwear.mp4", "poster": "v/streetwear.jpg", "preview": "v/streetwear-preview.mp4", "mediaType": "video/mp4", "title": "Streetwear", "desc": "", "featured": false, "createdAt": 1}, {"id": "w03", "src": "v/elegant_gown.mp4", "poster": "v/elegant_gown.jpg", "preview": "v/elegant_gown-preview.mp4", "mediaType": "video/mp4", "title": "Elegant Gown", "desc": "", "featured": false, "createdAt": 2}, {"id": "w04", "src": "v/subway.mp4", "poster": "v/subway.jpg", "preview": "v/subway-preview.mp4", "mediaType": "video/mp4", "title": "Subway", "desc": "", "featured": false, "createdAt": 3}, {"id": "w05", "src": "v/tiramisu.mp4", "poster": "v/tiramisu.jpg", "preview": "v/tiramisu-preview.mp4", "mediaType": "video/mp4", "title": "Tiramisu", "desc": "", "featured": false, "createdAt": 4}]</script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const canHover = matchMedia("(hover:hover)").matches;
+  const pad2 = n => String(n).padStart(2, "0");
+
+  /* ---------- ripple: slow drift of the noise field ---------- */
+  const turb = $("turb");
+  if (!reduce) { let t0 = performance.now(); (function wave(t){ const s = (t - t0) / 1000;
+    turb.setAttribute("baseFrequency", (0.006 + Math.sin(s * .35) * .0012).toFixed(5) + " " + (0.09 + Math.sin(s * .5 + 1) * .012).toFixed(5));
+    requestAnimationFrame(wave); })(t0); }
+
+  /* ---------- splash ---------- */
+  const splash = $("splash"), stage = $("stage");
+  let entered = false;
+  function enter() {
+    if (entered) return; entered = true;
+    splash.classList.add("out"); stage.classList.add("on");
+    setTimeout(() => { splash.hidden = true; }, reduce ? 0 : 1250);
+    setTimeout(lightCenter, 600);
+  }
+  const timer = setTimeout(enter, reduce ? 200 : 2700);
+  const skip = () => { clearTimeout(timer); enter(); };
+  splash.addEventListener("click", skip);
+  splash.addEventListener("wheel", skip, { passive: true });
+  splash.addEventListener("touchmove", skip, { passive: true });
+  addEventListener("keydown", e => { if (!entered) skip(); });
+
+  /* ---------- data ---------- */
+  let art = null, assets = null, works = [], items = [], editing = null, pendingFile = null;
+  const u = x => !x ? "" : x.includes("/") ? x : "/_blob/" + x;
+  const src = w => u(w.src || w.asset);
+  const isVideo = w => (w.mediaType || "").startsWith("video/");
+  const order = () => works.slice().sort((a, b) => (b.featured === true) - (a.featured === true) || (a.createdAt || 0) - (b.createdAt || 0));
+  function toast(m) { const t = $("toast"); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2400); }
+
+  // card videos: a still cover shows at once on every browser; the light preview clip plays on hover
+  function dress(v, w) {
+    if (w.poster) { v.poster = u(w.poster); v.preload = "none"; } else v.preload = "metadata";
+    v.src = w.preview ? u(w.preview) : src(w) + (w.poster ? "" : "#t=0.1");
+  }
+  // grab a still from an uploaded video to use as its cover
+  function coverFrom(file) {
+    return new Promise(resolve => {
+      const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.preload = "auto";
+      const url = URL.createObjectURL(file); let done = false;
+      const finish = b => { if (done) return; done = true; URL.revokeObjectURL(url); resolve(b); };
+      v.onloadeddata = () => { try { v.currentTime = Math.min(1, (v.duration || 2) / 3); } catch { finish(null); } };
+      v.onseeked = () => {
+        try { const c = document.createElement("canvas"); const k = Math.min(1, 720 / (v.videoWidth || 720));
+          c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+          c.getContext("2d").drawImage(v, 0, 0, c.width, c.height); c.toBlob(b => finish(b), "image/jpeg", .82);
+        } catch { finish(null); }
+      };
+      v.onerror = () => finish(null); setTimeout(() => finish(null), 8000);
+      v.src = url;
+    });
+  }
+
+  /* ---------- rail ---------- */
+  const rail = $("rail");
+  let nodes = [];
+  function render() {
+    items = order().filter(w => (w.src || w.asset) && isVideo(w));
+    rail.replaceChildren(); nodes = [];
+    $("count").textContent = items.length ? pad2(items.length) + " Works" : "";
+    if (!items.length) { rail.append(el("p", "empty", "No works yet")); return; }
+    items.forEach((w, i) => {
+      const fig = el("figure", "work"); fig.style.margin = "0"; fig.style.transitionDelay = (reduce ? 0 : i * 90) + "ms";
+      const fr = el("button", "frame"); fr.type = "button"; fr.setAttribute("aria-label", "Play " + (w.title || "work " + (i + 1)));
+      const v = document.createElement("video"); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute("muted", ""); dress(v, w);
+      fr.append(v);
+      const pool = el("div", "pool"); const r = document.createElement("video"); r.muted = true; r.loop = true; r.playsInline = true; r.setAttribute("muted", ""); dress(r, w); r.setAttribute("aria-hidden", "true"); pool.append(r);
+      const cap = el("figcaption", "cap"); cap.append(el("b", null, pad2(i + 1)), document.createTextNode("— " + (w.title || "Untitled")));
+      fig.append(fr, pool, cap); rail.append(fig);
+      const n = { fig, v, r, i }; nodes.push(n);
+      fr.addEventListener("click", () => { if (moved) return; open(i); });
+      if (canHover) { fig.addEventListener("mouseenter", () => light(n, true)); fig.addEventListener("mouseleave", () => light(n, false)); }
+    });
+    if (entered) setTimeout(lightCenter, 300);
+  }
+  function light(n, on) {
+    n.fig.classList.toggle("lit", on);
+    if (on) { n.v.play().catch(() => {}); n.r.currentTime = n.v.currentTime; n.r.play().catch(() => {}); }
+    else { n.v.pause(); n.r.pause(); }
+  }
+  // touch screens: the frame nearest the centre is the lit one
+  function lightCenter() {
+    if (canHover || !nodes.length) return;
+    const mid = rail.getBoundingClientRect().left + rail.clientWidth / 2;
+    let best = null, bd = 1e9;
+    nodes.forEach(n => { const b = n.fig.getBoundingClientRect(); const d = Math.abs(b.left + b.width / 2 - mid); if (d < bd) { bd = d; best = n; } });
+    nodes.forEach(n => { if (n === best) { if (!n.fig.classList.contains("lit")) light(n, true); } else if (n.fig.classList.contains("lit")) light(n, false); });
+  }
+  let st; rail.addEventListener("scroll", () => { clearTimeout(st); st = setTimeout(lightCenter, 120); }, { passive: true });
+  // keep reflections in step with their frames
+  setInterval(() => nodes.forEach(n => { if (!n.v.paused && Math.abs(n.r.currentTime - n.v.currentTime) > .12) n.r.currentTime = n.v.currentTime; }), 500);
+
+  /* ---------- drag with inertia + snap (mouse); touch and trackpad scroll natively ---------- */
+  let down = false, moved = false, lastX = 0, lastT = 0, vel = 0, raf = 0;
+  function snap() { rail.classList.remove("free"); }
+  rail.addEventListener("pointerdown", e => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    cancelAnimationFrame(raf); down = true; moved = false; lastX = e.clientX; lastT = performance.now(); vel = 0;
+    rail.classList.add("dragging");
+  });
+  addEventListener("pointermove", e => {
+    if (!down) return;
+    const dx = e.clientX - lastX, now = performance.now();
+    if (Math.abs(dx) > 0) { if (Math.abs(e.clientX - lastX) > 2) moved = true; rail.scrollLeft -= dx; vel = dx / Math.max(1, now - lastT); lastX = e.clientX; lastT = now; }
+  });
+  addEventListener("pointerup", () => {
+    if (!down) return; down = false; rail.classList.remove("dragging");
+    if (!moved) return;
+    setTimeout(() => (moved = false), 60);
+    rail.classList.add("free");
+    let v = vel * 16;
+    const step = () => { v *= .94; rail.scrollLeft -= v; if (Math.abs(v) > .4 && !reduce) raf = requestAnimationFrame(step); else snap(); };
+    raf = requestAnimationFrame(step);
+  });
+  // vertical wheel moves the row sideways
+  rail.addEventListener("wheel", e => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); rail.scrollBy({ left: e.deltaY, behavior: "auto" }); }
+  }, { passive: false });
+  addEventListener("keydown", e => {
+    if (!entered || !$("viewer").hidden || !$("editor").hidden) return;
+    const w = (nodes[0]?.fig.offsetWidth || 300) + 48;
+    if (e.key === "ArrowRight") rail.scrollBy({ left: w, behavior: "smooth" });
+    if (e.key === "ArrowLeft") rail.scrollBy({ left: -w, behavior: "smooth" });
+  });
+
+  /* ---------- viewer ---------- */
+  let confirmDel = false;
+  function open(i) {
+    const w = items[i]; if (!w) return; confirmDel = false;
+    nodes.forEach(n => { n.v.pause(); n.r.pause(); n.fig.classList.remove("lit"); });
+    const box = $("vbox"); box.replaceChildren();
+    const v = document.createElement("video"); if (w.poster) v.poster = u(w.poster); v.preload = "auto"; v.src = src(w); v.controls = true; v.loop = true; v.playsInline = true; v.autoplay = true;
+    v.setAttribute("controlsList", "nodownload noplaybackrate"); v.disablePictureInPicture = true;
+    box.append(v, el("div", "vtitle", pad2(i + 1) + " — " + (w.title || "Untitled")));
+    if (w.desc) box.append(el("p", "vdesc", w.desc));
+    if (assets) {
+      const tools = el("div", "vtools");
+      const e = el("button", "link", "Edit"); e.type = "button"; e.onclick = () => { close(); openEditor(w); };
+      const x = el("button", "link", "Delete"); x.type = "button";
+      x.onclick = async () => {
+        if (!confirmDel) { confirmDel = true; x.textContent = "Click again to delete"; return; }
+        x.disabled = true;
+        try { await saveWorks(works.filter(o => o.id !== w.id)); for (const id of [w.asset, w.poster, w.preview]) if (id) { try { await assets.delete(id); } catch {} } }
+        catch (e) { x.disabled = false; x.textContent = "Delete"; confirmDel = false; toast(failMsg(e)); }
+      };
+      tools.append(e, x); box.append(tools);
+    }
+    const vw = $("viewer"); vw.hidden = false; requestAnimationFrame(() => vw.classList.add("on"));
+    v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+    $("closeBtn").focus({ preventScroll: true });
+  }
+  function close() {
+    const vw = $("viewer"); vw.classList.remove("on");
+    vw.querySelectorAll("video").forEach(v => v.pause());
+    setTimeout(() => { vw.hidden = true; $("vbox").replaceChildren(); lightCenter(); }, reduce ? 0 : 700);
+  }
+  $("closeBtn").onclick = close;
+  addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (!$("editor").hidden) closeEditor(); else if (!$("viewer").hidden) close();
+  });
+
+  /* ---------- editor (editors only) ---------- */
+  function setPreview(name, url) {
+    const inner = $("dropInner"); inner.replaceChildren();
+    if (url) { const m = Object.assign(document.createElement("video"), { src: url, muted: true, autoplay: true, loop: true, playsInline: true }); m.className = "pv"; inner.append(m, name ? name + " · click to replace" : "Click to replace"); }
+    else inner.append("Choose or drop a video · MP4 / WebM · up to 20 MB");
+  }
+  function openEditor(w) {
+    editing = w || null; pendingFile = null;
+    $("formTitle").textContent = w ? "Edit" : "Upload";
+    $("f-title").value = w?.title || ""; $("f-desc").value = w?.desc || ""; $("f-feat").checked = !!w?.featured;
+    $("formErr").hidden = true; $("file").value = "";
+    setPreview(null, w?.asset ? src(w) : "");
+    $("editor").hidden = false;
+  }
+  function closeEditor() { $("editor").hidden = true; editing = null; pendingFile = null; }
+  $("cancelBtn").onclick = closeEditor;
+  $("addBtn").onclick = () => openEditor(null);
+  function take(f) {
+    const err = $("formErr"); err.hidden = true; if (!f) return;
+    if (!["video/mp4", "video/webm"].includes(f.type)) { err.textContent = "Use an MP4 or WebM file. MOV files need exporting to MP4 first."; err.hidden = false; return; }
+    if (f.size > 20 * 1024 * 1024) { err.textContent = "This file is over 20 MB. Compress it and try again."; err.hidden = false; return; }
+    pendingFile = f; setPreview(f.name, URL.createObjectURL(f));
+  }
+  $("file").onchange = e => take(e.target.files[0]);
+  const drop = $("drop");
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", e => { e.preventDefault(); drop.classList.remove("over"); take(e.dataTransfer.files[0]); });
+  $("form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const err = $("formErr"); err.hidden = true;
+    if (!editing && !pendingFile) { err.textContent = "Choose a video first."; err.hidden = false; return; }
+    const save = $("saveBtn"); save.disabled = true; save.textContent = pendingFile ? "Uploading…" : "Saving…";
+    try {
+      let asset = editing?.asset || null, mediaType = editing?.mediaType || null, oldAsset = null;
+      let poster = editing?.poster || null, preview = editing?.preview || null, oldExtra = [];
+      if (pendingFile) {
+        const up = await assets.upload(pendingFile); oldAsset = asset; asset = up.id; mediaType = up.contentType;
+        oldExtra = [poster, preview]; poster = null; preview = null;
+        const still = await coverFrom(pendingFile);
+        if (still) { try { poster = (await assets.upload(new File([still], "cover.jpg", { type: "image/jpeg" }))).id; } catch {} }
+      }
+      const body = { poster, preview, title: $("f-title").value.trim(), desc: $("f-desc").value.trim(), featured: $("f-feat").checked,
+        category: editing?.category || "", prompt: editing?.prompt || "", asset, mediaType, createdAt: editing?.createdAt || Date.now(), updatedAt: Date.now() };
+      body.id = editing ? editing.id : "w" + Date.now().toString(36);
+      if (oldAsset && oldAsset !== asset) { for (const id of [oldAsset, ...oldExtra]) if (id) { try { await assets.delete(id); } catch {} } }
+      await saveWorks(editing ? works.map(o => o.id === editing.id ? body : o) : works.concat(body));
+    } catch (x) {
+      const c = x && x.code;
+      err.textContent = c === "too_large" ? "This file is over 20 MB. Compress it and try again."
+        : c === "unsupported_type" ? "Use an MP4 or WebM file."
+        : c === "quota_or_state" || c === "quota_exceeded" ? "Storage is full. Delete an older work first."
+        : c === "rate_limited" ? "Too many changes at once. Wait a moment and try again." : failMsg(x);
+      err.hidden = false;
+    } finally { save.disabled = false; save.textContent = "Save"; }
+  });
+
+  /* ---------- saving: the works list lives inside the page, so anyone with the link can see it ---------- */
+  const SKEL = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>';
+  function failMsg(e) {
+    const c = e && e.code;
+    if (c === "not_writer" || c === "not_granted" || c === "consent_required") return "Only the owner can edit this page";
+    if (c === "conflict") return "The page changed elsewhere. Reloading the latest version";
+    if (c === "rate_limited") return "Too many changes at once. Wait a moment and try again";
+    return "Couldn’t save. Try again";
+  }
+  async function saveWorks(list) {
+    if (!art) throw { code: "not_granted" };
+    const res = await fetch("page-template.txt", { cache: "no-store" });
+    if (!res.ok) throw { code: "upstream_error" };
+    const tpl = await res.text();
+    const TOK = "__WORKS" + "_JSON__";
+    if (!tpl.includes(TOK)) throw { code: "upstream_error" };
+    const json = JSON.stringify(list).replace(/</g, "\\u003c");
+    toast("Publishing…");
+    await art.publish(SKEL + tpl.split(TOK).join(json) + "</body></html>");
+  }
+
+  /* ---------- boot ---------- */
+  try { works = JSON.parse($("works-data").textContent) || []; } catch { works = []; }
+  render();
+  (async () => {
+    const use = n => (window.claude && window.claude.use) ? window.claude.use(n) : Promise.resolve(null);
+    // static page: no sign-in features, so it opens the same way for every visitor
+  })();
+  addEventListener("resize", () => setTimeout(lightCenter, 200));
+})();
+</script>
+
+</body></html>
